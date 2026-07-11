@@ -24,10 +24,18 @@ class MainActivity : ComponentActivity() {
                         name = "Snow",
                         modifier = Modifier.padding(innerPadding)
                     )
+                    QuestBoardScreen()
                 }
             }
         }
     }
+}
+
+@Composable
+fun QuestBoardScreen(){
+    Text(
+        text= "Questboard!"
+    )
 }
 
 @Composable
