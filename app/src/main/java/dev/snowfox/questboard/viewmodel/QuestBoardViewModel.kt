@@ -1,30 +1,28 @@
 package dev.snowfox.questboard.viewmodel
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import dev.snowfox.questboard.data.repository.QuestRepository
 import dev.snowfox.questboard.model.Quest
-import dev.snowfox.questboard.data.sampleQuests
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
-class QuestBoardViewModel : ViewModel() {
+class QuestBoardViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _quests = MutableStateFlow(sampleQuests)
+    private val repository = QuestRepository(application)
 
-    val quests = _quests.asStateFlow()
-
+    val quests: StateFlow<List<Quest>> = repository.questsFlow.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = emptyList()
+    )
 
     fun toggleQuest(quest: Quest) {
-
-        _quests.value = _quests.value.map {
-            if (it.id == quest.id) {
-                it.copy(
-                    completed = !it.completed
-                )
-            } else {
-                it
-            }
+        viewModelScope.launch {
+            repository.toggleQuest(quest.id)
         }
-
     }
-
 }

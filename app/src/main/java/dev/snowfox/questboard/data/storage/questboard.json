@@ -1,0 +1,10 @@
+{
+  "quests":[
+    {
+      "id":1,
+      "title":"Brush teeth",
+      "type":"DAILY",
+      "completed":true
+    }
+  ]
+}
