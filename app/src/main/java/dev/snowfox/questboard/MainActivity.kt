@@ -10,8 +10,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import dev.snowfox.questboard.ui.theme.QuestBoardTheme
+import androidx.compose.foundation.layout.Column
+import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,37 +22,53 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             QuestBoardTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Snow",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                Scaffold(
+                    modifier = Modifier.fillMaxSize()
+                ) { _ ->
                     QuestBoardScreen()
                 }
             }
         }
     }
 }
-
 @Composable
 fun QuestBoardScreen(){
-    Text(
-        text= "Questboard!"
-    )
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name! Wruff!",
-        modifier = modifier
+    val quests = listOf(
+        Quest(
+            title = "Brush Teeth",
+            type = QuestType.DAILY
+        ),
+        Quest(
+            title = "Open the curtains",
+            type = QuestType.DAILY
+        ),
+        Quest(
+            title = "Open the windows",
+            type = QuestType.DAILY
+        ),
+        Quest(
+            title = "Wash dishes",
+            type = QuestType.WEEKLY
+        )
     )
-}
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp)
+    ){
+        Text(
+            text= "Questboard!"
+        )
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    QuestBoardTheme {
-        Greeting("Snow")
+        Spacer(
+            modifier = Modifier.height(16.dp)
+        )
+
+        quests.forEach { quest ->
+            Text(
+                text = quest.title
+            )
+        }
     }
 }
