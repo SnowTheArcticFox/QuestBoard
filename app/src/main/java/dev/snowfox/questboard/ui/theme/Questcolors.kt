@@ -11,6 +11,7 @@ object QuestColors {
     val SurfaceDone = Color(0xFF1A2A22)
     val Accent = Color(0xFFE8B75E)      // dorado — nivel / XP
     val Success = Color(0xFF6FCF97)     // verde — misión completada
+    val Danger = Color(0xFFE07A5F)      // coral — acciones destructivas (eliminar)
     val TextPrimary = Color(0xFFF0EDE4)
     val TextSecondary = Color(0xFF8B90A3)
     val Divider = Color(0xFF2C3142)

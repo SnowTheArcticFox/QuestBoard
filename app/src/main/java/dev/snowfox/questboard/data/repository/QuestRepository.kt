@@ -44,8 +44,23 @@ class QuestRepository(private val context: Context) {
         saveQuests(updated)
     }
 
-    // Útil más adelante para el botón de "exportar": es literalmente
-    // el string que vas a escribir en el archivo que el usuario comparta.
+    suspend fun addQuest(quest: Quest) {
+        val current = questsFlow.first()
+        saveQuests(current + quest)
+    }
+
+    suspend fun updateQuest(quest: Quest) {
+        val current = questsFlow.first()
+        saveQuests(current.map { if (it.id == quest.id) quest else it })
+    }
+
+    suspend fun deleteQuest(questId: Int) {
+        val current = questsFlow.first()
+        saveQuests(current.filterNot { it.id == questId })
+    }
+
+    // Útil para el botón de "exportar": es literalmente el string que
+    // vas a escribir en el archivo que el usuario comparta.
     suspend fun exportAsJson(): String {
         return json.encodeToString(questsFlow.first())
     }

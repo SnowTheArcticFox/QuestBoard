@@ -7,8 +7,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import dev.snowfox.questboard.ui.navigation.QuestBoardNavHost
 import dev.snowfox.questboard.ui.theme.QuestBoardTheme
-import dev.snowfox.questboard.ui.screens.QuestBoardScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,7 +19,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     modifier = Modifier.fillMaxSize()
                 ) { _ ->
-                    QuestBoardScreen()
+                    QuestBoardNavHost()
                 }
             }
         }
