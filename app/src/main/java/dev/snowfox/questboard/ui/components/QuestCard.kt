@@ -6,8 +6,10 @@ import androidx.compose.runtime.Composable
 import dev.snowfox.questboard.model.Quest
 
 @Composable
-fun QuestCard(quest : Quest){
-    Card{
+fun QuestCard(quest : Quest, onClick: () -> Unit){
+    Card(
+        onClick = onClick
+    ) {
         Text(
             text = quest.title
         )

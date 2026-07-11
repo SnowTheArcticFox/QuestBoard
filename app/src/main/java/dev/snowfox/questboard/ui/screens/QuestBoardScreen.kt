@@ -9,31 +9,24 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.snowfox.questboard.model.Quest
+import dev.snowfox.questboard.data.sampleQuests
 import dev.snowfox.questboard.model.QuestType
 import dev.snowfox.questboard.ui.components.QuestCard
 import dev.snowfox.questboard.ui.components.QuestSectionTitle
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+
+
+
 @Composable
 fun QuestBoardScreen() {
-    val quests = listOf(
-        Quest(
-            title = "Brush Teeth",
-            type = QuestType.DAILY
-        ),
-        Quest(
-            title = "Open the curtains",
-            type = QuestType.DAILY
-        ),
-        Quest(
-            title = "Open the windows",
-            type = QuestType.DAILY
-        ),
-        Quest(
-            title = "Wash dishes",
-            type = QuestType.WEEKLY
-        )
-    )
+
+    var quests by remember {
+        mutableStateOf(sampleQuests)
+    }
 
     val dailyQuests = quests.filter {
         it.type == QuestType.DAILY
@@ -41,6 +34,10 @@ fun QuestBoardScreen() {
 
     val weeklyQuests = quests.filter {
         it.type == QuestType.WEEKLY
+    }
+
+    val monthlyQuests = quests.filter {
+        it.type == QuestType.MONTHLY
     }
 
     Column(
@@ -63,7 +60,17 @@ fun QuestBoardScreen() {
         )
 
         dailyQuests.forEach {quest ->
-            QuestCard(quest)
+            QuestCard(quest = quest, onClick = {
+                quests = quests.map {
+                    if (it == quest) {
+                        it.copy(
+                            completed = !it.completed
+                        )
+                    } else {
+                        it
+                    }
+                }
+            })
 
             Spacer(
                 modifier = Modifier.height(8.dp)
@@ -81,7 +88,45 @@ fun QuestBoardScreen() {
         )
 
         weeklyQuests.forEach {quest ->
-            QuestCard(quest)
+            QuestCard(quest = quest, onClick = {
+                quests = quests.map {
+                    if (it == quest) {
+                        it.copy(
+                            completed = !it.completed
+                        )
+                    } else {
+                        it
+                    }
+                }
+            })
+
+            Spacer(
+                modifier = Modifier.height(8.dp)
+            )
+        }
+
+        Spacer(
+            modifier = Modifier.height(16.dp)
+        )
+
+        QuestSectionTitle("Monthly Quests")
+
+        Spacer(
+            modifier = Modifier.height(8.dp)
+        )
+
+        monthlyQuests.forEach {quest ->
+            QuestCard(quest = quest, onClick = {
+                quests = quests.map {
+                    if (it == quest) {
+                        it.copy(
+                            completed = !it.completed
+                        )
+                    } else {
+                        it
+                    }
+                }
+            })
 
             Spacer(
                 modifier = Modifier.height(8.dp)

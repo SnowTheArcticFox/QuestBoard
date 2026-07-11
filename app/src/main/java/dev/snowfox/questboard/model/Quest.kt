@@ -1,6 +1,7 @@
 package dev.snowfox.questboard.model
 
 data class Quest (
+    val id: Int,
     val title: String,
     val type: QuestType,
     val completed: Boolean = false
