@@ -9,24 +9,23 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.snowfox.questboard.data.sampleQuests
 import dev.snowfox.questboard.model.QuestType
 import dev.snowfox.questboard.ui.components.QuestCard
 import dev.snowfox.questboard.ui.components.QuestSectionTitle
 
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+
+import androidx.lifecycle.viewmodel.compose.viewModel
+import dev.snowfox.questboard.viewmodel.QuestBoardViewModel
+
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 
 
 @Composable
-fun QuestBoardScreen() {
+fun QuestBoardScreen(viewModel: QuestBoardViewModel = viewModel()) {
 
-    var quests by remember {
-        mutableStateOf(sampleQuests)
-    }
+    val quests by viewModel.quests.collectAsStateWithLifecycle()
 
     val dailyQuests = quests.filter {
         it.type == QuestType.DAILY
@@ -61,15 +60,7 @@ fun QuestBoardScreen() {
 
         dailyQuests.forEach {quest ->
             QuestCard(quest = quest, onClick = {
-                quests = quests.map {
-                    if (it == quest) {
-                        it.copy(
-                            completed = !it.completed
-                        )
-                    } else {
-                        it
-                    }
-                }
+                viewModel.toggleQuest(quest)
             })
 
             Spacer(
@@ -89,15 +80,7 @@ fun QuestBoardScreen() {
 
         weeklyQuests.forEach {quest ->
             QuestCard(quest = quest, onClick = {
-                quests = quests.map {
-                    if (it == quest) {
-                        it.copy(
-                            completed = !it.completed
-                        )
-                    } else {
-                        it
-                    }
-                }
+                viewModel.toggleQuest(quest)
             })
 
             Spacer(
@@ -117,15 +100,7 @@ fun QuestBoardScreen() {
 
         monthlyQuests.forEach {quest ->
             QuestCard(quest = quest, onClick = {
-                quests = quests.map {
-                    if (it == quest) {
-                        it.copy(
-                            completed = !it.completed
-                        )
-                    } else {
-                        it
-                    }
-                }
+                viewModel.toggleQuest(quest)
             })
 
             Spacer(
