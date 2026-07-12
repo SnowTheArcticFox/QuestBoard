@@ -1,10 +1,8 @@
 package dev.snowfox.questboard.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilterChip
@@ -29,28 +25,29 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.snowfox.questboard.model.QuestType
+import dev.snowfox.questboard.ui.components.FieldLabel
+import dev.snowfox.questboard.ui.components.StepperButton
 import dev.snowfox.questboard.ui.theme.QuestColors
 import dev.snowfox.questboard.viewmodel.QuestBoardViewModel
 
 @Composable
 fun QuestFormScreen(
     viewModel: QuestBoardViewModel,
-    questId: Int?,
+    templateId: Int?,
     onDone: () -> Unit
 ) {
-    val quests by viewModel.quests.collectAsStateWithLifecycle()
-    val existingQuest = remember(questId, quests) { quests.find { it.id == questId } }
-    val isEditing = existingQuest != null
+    val templates by viewModel.templates.collectAsStateWithLifecycle()
+    val existing = remember(templateId, templates) { templates.find { it.id == templateId } }
+    val isEditing = existing != null
 
-    var title by remember(existingQuest) { mutableStateOf(existingQuest?.title ?: "") }
-    var type by remember(existingQuest) { mutableStateOf(existingQuest?.type ?: QuestType.DAILY) }
-    var xp by remember(existingQuest) { mutableStateOf(existingQuest?.xp ?: 10) }
+    var title by remember(existing) { mutableStateOf(existing?.title ?: "") }
+    var type by remember(existing) { mutableStateOf(existing?.type ?: QuestType.DAILY) }
+    var xp by remember(existing) { mutableStateOf(existing?.xp ?: 10) }
 
     Column(
         modifier = Modifier
@@ -135,9 +132,9 @@ fun QuestFormScreen(
             onClick = {
                 if (title.isNotBlank()) {
                     if (isEditing) {
-                        viewModel.updateQuest(existingQuest!!.copy(title = title, type = type, xp = xp))
+                        viewModel.updateTemplate(existing!!.copy(title = title, type = type, xp = xp))
                     } else {
-                        viewModel.addQuest(title = title, type = type, xp = xp)
+                        viewModel.addTemplate(title = title, type = type, xp = xp)
                     }
                     onDone()
                 }
@@ -156,7 +153,7 @@ fun QuestFormScreen(
             Spacer(Modifier.height(12.dp))
             OutlinedButton(
                 onClick = {
-                    viewModel.deleteQuest(existingQuest!!.id)
+                    viewModel.deleteTemplate(existing!!.id)
                     onDone()
                 },
                 colors = ButtonDefaults.outlinedButtonColors(contentColor = QuestColors.Danger),
@@ -168,28 +165,8 @@ fun QuestFormScreen(
     }
 }
 
-@Composable
-private fun FieldLabel(text: String) {
-    Text(text = text, color = QuestColors.TextSecondary, fontSize = 12.sp)
-    Spacer(Modifier.height(6.dp))
-}
-
 private fun etiquetaTipo(type: QuestType): String = when (type) {
     QuestType.DAILY -> "Diaria"
     QuestType.WEEKLY -> "Semanal"
     QuestType.MONTHLY -> "Mensual"
-}
-
-@Composable
-private fun StepperButton(text: String, onClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .size(40.dp)
-            .clip(CircleShape)
-            .border(1.dp, QuestColors.Divider, CircleShape)
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(text = text, color = QuestColors.TextPrimary, fontSize = 18.sp)
-    }
 }

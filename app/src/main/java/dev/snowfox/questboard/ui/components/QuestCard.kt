@@ -3,7 +3,6 @@ package dev.snowfox.questboard.ui.components
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -29,7 +28,7 @@ import dev.snowfox.questboard.model.Quest
 import dev.snowfox.questboard.ui.theme.QuestColors
 
 @Composable
-fun QuestCard(quest: Quest, onClick: () -> Unit, onEdit: () -> Unit) {
+fun QuestCard(quest: Quest, onClick: () -> Unit) {
     val backgroundColor by animateColorAsState(
         targetValue = if (quest.completed) QuestColors.SurfaceDone else QuestColors.Surface,
         label = "questCardBackground"
@@ -66,25 +65,10 @@ fun QuestCard(quest: Quest, onClick: () -> Unit, onEdit: () -> Unit) {
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Medium
             )
-
-            Spacer(Modifier.width(10.dp))
-
-            // Ícono de editar. Al estar dentro del Card (que ya tiene su
-            // propio onClick), este clickable "captura" el toque en su
-            // propia área, así que no dispara el toggle de completado.
-            Text(
-                text = "✎",
-                color = QuestColors.TextSecondary,
-                fontSize = 15.sp,
-                modifier = Modifier
-                    .clickable(onClick = onEdit)
-                    .padding(4.dp)
-            )
         }
     }
 }
 
-// Círculo tipo "sello" que se rellena de verde con un check al completar
 @Composable
 private fun QuestSeal(completed: Boolean) {
     val borderColor by animateColorAsState(

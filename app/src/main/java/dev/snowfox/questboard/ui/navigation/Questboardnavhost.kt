@@ -1,52 +1,56 @@
 package dev.snowfox.questboard.ui.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dev.snowfox.questboard.ui.screens.QuestBoardScreen
 import dev.snowfox.questboard.ui.screens.QuestFormScreen
+import dev.snowfox.questboard.ui.screens.QuestPoolScreen
+import dev.snowfox.questboard.ui.screens.SettingsScreen
 import dev.snowfox.questboard.viewmodel.QuestBoardViewModel
 
-private const val ROUTE_BOARD = "board"
-private const val ROUTE_FORM = "form"
-private const val ARG_QUEST_ID = "questId"
-
 @Composable
-fun QuestBoardNavHost() {
-    val navController = rememberNavController()
+fun QuestBoardNavHost(
+    navController: NavHostController,
+    viewModel: QuestBoardViewModel,
+    onOpenDrawer: () -> Unit
+) {
+    NavHost(navController = navController, startDestination = QuestRoutes.BOARD) {
+        composable(QuestRoutes.BOARD) {
+            QuestBoardScreen(viewModel = viewModel, onOpenDrawer = onOpenDrawer)
+        }
 
-    // Un solo ViewModel compartido por toda la app (se crea acá arriba,
-    // en el NavHost, en vez de en cada pantalla): así el formulario ve
-    // y modifica la misma lista que el tablero, sin duplicar estado.
-    val viewModel: QuestBoardViewModel = viewModel()
-
-    NavHost(navController = navController, startDestination = ROUTE_BOARD) {
-        composable(ROUTE_BOARD) {
-            QuestBoardScreen(
+        composable(QuestRoutes.POOL) {
+            QuestPoolScreen(
                 viewModel = viewModel,
-                onAddQuest = { navController.navigate(ROUTE_FORM) },
-                onEditQuest = { id -> navController.navigate("$ROUTE_FORM?$ARG_QUEST_ID=$id") }
+                onOpenDrawer = onOpenDrawer,
+                onAddTemplate = { navController.navigate(QuestRoutes.FORM) },
+                onEditTemplate = { id -> navController.navigate("${QuestRoutes.FORM}?${QuestRoutes.ARG_QUEST_ID}=$id") }
             )
         }
+
         composable(
-            route = "$ROUTE_FORM?$ARG_QUEST_ID={$ARG_QUEST_ID}",
+            route = "${QuestRoutes.FORM}?${QuestRoutes.ARG_QUEST_ID}={${QuestRoutes.ARG_QUEST_ID}}",
             arguments = listOf(
-                navArgument(ARG_QUEST_ID) {
+                navArgument(QuestRoutes.ARG_QUEST_ID) {
                     type = NavType.IntType
                     defaultValue = -1
                 }
             )
         ) { backStackEntry ->
-            val questId = backStackEntry.arguments?.getInt(ARG_QUEST_ID) ?: -1
+            val id = backStackEntry.arguments?.getInt(QuestRoutes.ARG_QUEST_ID) ?: -1
             QuestFormScreen(
                 viewModel = viewModel,
-                questId = if (questId == -1) null else questId,
+                templateId = if (id == -1) null else id,
                 onDone = { navController.popBackStack() }
             )
+        }
+
+        composable(QuestRoutes.SETTINGS) {
+            SettingsScreen(viewModel = viewModel, onOpenDrawer = onOpenDrawer)
         }
     }
 }
