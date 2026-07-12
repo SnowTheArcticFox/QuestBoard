@@ -78,7 +78,21 @@ object QuestNotificationManager {
         val pendingDaily = quests.filter { it.type == QuestType.DAILY && !it.completed }
         val pendingWeekly = quests.filter { it.type == QuestType.WEEKLY && !it.completed }
         val pendingMonthly = quests.filter { it.type == QuestType.MONTHLY && !it.completed }
-        val preview = (pendingDaily + pendingWeekly + pendingMonthly).take(3)
+        val sections = mutableListOf<Pair<String, List<Quest>>>()
+        var remaining = 3
+
+        fun addSection(title: String, quests: List<Quest>) {
+            val shown = quests.take(remaining)
+
+            if (shown.isEmpty()) return
+
+            sections += title to shown
+            remaining -= shown.size
+        }
+
+        addSection("──────── Daily ────────", pendingDaily)
+        addSection("──────── Weekly ────────", pendingWeekly)
+        addSection("──────── Monthly ────────", pendingMonthly)
 
         val builder = NotificationCompat.Builder(context, CHANNEL_BOARD)
             .setSmallIcon(context.applicationInfo.icon) // TODO: reemplazar por un ícono propio cuando tengas uno
@@ -88,21 +102,32 @@ object QuestNotificationManager {
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setContentIntent(openAppIntent(context))
 
-        if (preview.isEmpty()) {
+        val totalPending = pendingDaily.size + pendingWeekly.size + pendingMonthly.size
+
+        if (totalPending == 0) {
             builder
-                .setContentTitle("QuestBoard")
-                .setContentText("No hay misiones pendientes 🎉")
+                .setContentTitle("No hay misiones pendientes!")
         } else {
             val style = NotificationCompat.InboxStyle()
-            preview.forEach { quest -> style.addLine("${quest.title}  (+${quest.xp} XP)") }
+
+            sections.forEachIndexed { index, (title, quests) ->
+                style.addLine(title)
+
+                quests.forEach {
+                    style.addLine("• ${it.title} (+${it.xp} XP)")
+                }
+            }
 
             builder
-                .setContentTitle("${preview.size} misión(es) pendiente(s)")
-                .setContentText(preview.first().title)
+                .setContentTitle("")
                 .setStyle(style)
         }
 
-        NotificationManagerCompat.from(context).notify(NOTIF_ID_BOARD, builder.build())
+        try {
+            NotificationManagerCompat.from(context).notify(NOTIF_ID_BOARD, builder.build())
+        } catch (_: SecurityException) {
+            // El permiso ya no está disponible.
+        }
     }
 
     // Notificación normal (se puede descartar), solo para el momento en
@@ -120,6 +145,10 @@ object QuestNotificationManager {
             .setContentIntent(openAppIntent(context))
             .build()
 
-        NotificationManagerCompat.from(context).notify(NOTIF_ID_RELOAD, notification)
+        try {
+            NotificationManagerCompat.from(context).notify(NOTIF_ID_RELOAD, notification)
+        } catch (_: SecurityException) {
+            // El permiso ya no está disponible.
+        }
     }
 }
