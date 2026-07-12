@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat
 import dev.snowfox.questboard.MainActivity
 import dev.snowfox.questboard.model.Quest
 import dev.snowfox.questboard.model.QuestType
+import dev.snowfox.questboard.R
 
 private const val CHANNEL_BOARD = "quest_board_channel"
 private const val CHANNEL_RELOAD = "quest_reload_channel"
@@ -95,7 +96,7 @@ object QuestNotificationManager {
         addSection("──────── Monthly ────────", pendingMonthly)
 
         val builder = NotificationCompat.Builder(context, CHANNEL_BOARD)
-            .setSmallIcon(context.applicationInfo.icon) // TODO: reemplazar por un ícono propio cuando tengas uno
+            .setSmallIcon(R.drawable.ic_stat_name) // TODO: reemplazar por un ícono propio cuando tengas uno
             .setOngoing(true)
             .setOnlyAlertOnce(true)
             .setSilent(true)
@@ -137,7 +138,7 @@ object QuestNotificationManager {
         if (!hasPermission(context)) return
 
         val notification = NotificationCompat.Builder(context, CHANNEL_RELOAD)
-            .setSmallIcon(context.applicationInfo.icon) // TODO: reemplazar por un ícono propio
+            .setSmallIcon(R.drawable.ic_stat_name) // TODO: reemplazar por un ícono propio
             .setContentTitle("QuestBoard")
             .setContentText("¡Misiones renovadas! Toca para verlas.")
             .setAutoCancel(true)
